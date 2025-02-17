@@ -1,0 +1,77 @@
+#include <iostream>
+#include <fstream>
+#include <string>
+#include <cstdlib> // For system() to run wkhtmltopdf
+using namespace std;
+
+// Function to get multi-line input string
+string getMultilineInput(const string &prompt) {
+    string input, line;
+    cout << prompt << " (Press Enter twice to finish):\n";
+    while (true) {
+        getline(cin, line);
+        if (line.empty()) break;
+        input += line + "<br>"; // Preserve line breaks in HTML
+    }
+    return input;
+}
+
+int main() {
+    string name, email, phone, location;
+    string profile, technicalSkills, skills, languages;
+    string academicProjects, experience, certifications, education;
+
+    // Get user input
+    cout << "Enter Name: ";
+    getline(cin, name);
+    cout << "Enter Email: ";
+    getline(cin, email);
+    cout << "Enter Phone Number: ";
+    getline(cin, phone);
+    cout << "Enter Location: ";
+    getline(cin, location);
+    profile = getMultilineInput("Enter Profile Summary");
+    technicalSkills = getMultilineInput("Enter Technical Skills (comma-separated)");
+    skills = getMultilineInput("Enter Other Skills (comma-separated)");
+    languages = getMultilineInput("Enter Languages (comma-separated)");
+    academicProjects = getMultilineInput("Enter Academic Projects");
+    experience = getMultilineInput("Enter Experience");
+    certifications = getMultilineInput("Enter Certifications");
+    education = getMultilineInput("Enter Education");
+
+    // Generate HTML file
+    ofstream file("resume.html");
+    file << "<!DOCTYPE html>\n<html>\n<head>\n<style>";
+    file << "body { font-family: Arial, sans-serif; margin: 40px; }\n";
+    file << "h1 { font-size: 32px; }\n";
+    file << "h2 { font-size: 22px; border-bottom: 2px solid black; }\n";
+    file << "p, li { font-size: 16px; }\n";
+    file << "</style>\n</head>\n<body>";
+    file << "<h1>" << name << "</h1>";
+    file << "<p><strong>Email:</strong> " << email << " | <strong>Phone:</strong> " << phone << " | <strong>Location:</strong> " << location << "</p>";
+    file << "<h2>Profile</h2><p>" << profile << "</p>";
+    file << "<h2>Technical Skills</h2><p>" << technicalSkills << "</p>";
+    file << "<h2>Skills</h2><p>" << skills << "</p>";
+    file << "<h2>Languages</h2><p>" << languages << "</p>";
+    file << "<h2>Academic Projects</h2><p>" << academicProjects << "</p>";
+    file << "<h2>Experience</h2><p>" << experience << "</p>";
+    file << "<h2>Certifications</h2><p>" << certifications << "</p>";
+    file << "<h2>Education</h2><p>" << education << "</p>";  // Add Education section
+    file << "</body></html>";
+    file.close();
+
+    cout << "Resume HTML generated as resume.html" << endl;
+
+    // Use full path to wkhtmltopdf
+    string command = "\"C:\\Program Files\\wkhtmltopdf\\bin\\wkhtmltopdf.exe\" resume.html resume.pdf";
+    int result = system(command.c_str());
+
+    // Check if the command was successful
+    if (result == 0) {
+        cout << "Resume PDF generated as resume.pdf" << endl;
+    } else {
+        cout << "Failed to generate PDF. Error code: " << result << endl;
+    }
+
+    return 0;
+}
